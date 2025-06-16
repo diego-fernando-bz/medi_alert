@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'register_screen.dart';
 import 'home_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  Future<bool> validateLogin(String email, String password) async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedEmail = prefs.getString('saved_email');
+    final savedPassword = prefs.getString('saved_password');
+
+    return (email == savedEmail && password == savedPassword);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +41,7 @@ class LoginScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     final email = emailController.text.trim();
                     final password = passwordController.text.trim();
 
@@ -43,10 +52,19 @@ class LoginScreen extends StatelessWidget {
                         ),
                       );
                     } else {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => HomeScreen()),
-                      );
+                      final isValid = await validateLogin(email, password);
+                      if (isValid) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => HomeScreen()),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Correo o contraseña incorrectos"),
+                          ),
+                        );
+                      }
                     }
                   },
                   child: Text("Iniciar Sesión"),
