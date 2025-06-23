@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'AddMedicationScreen.dart';
-import 'ConfigScreenState.dart';
-import 'login_screen.dart';
+import 'package:medi_alert/screens/add_medication_screen.dart';
+import 'package:medi_alert/screens/config_screen.dart';
+import 'package:medi_alert/screens/login_screen.dart'; // Solo si tienes login
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -15,22 +15,23 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('MediAlert'),
+        title: const Text('MediAlert'),
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
-            onPressed:
-                () => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => LoginScreen()),
-                ),
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => LoginScreen()),
+              );
+            },
           ),
         ],
       ),
       body: ListView(
-        padding: EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         children: [
-          Text(
+          const Text(
             'Próxima toma:',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
@@ -44,27 +45,28 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () async {
               final resultado = await Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => AddMedicationScreen()),
+                MaterialPageRoute(builder: (_) => const AddMedicationScreen()),
               );
               if (resultado != null) {
                 setState(() => medicamentos.add(resultado));
               }
             },
-            child: Text('Añadir Medicamento'),
+            child: const Text('Añadir Medicamento'),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           ElevatedButton(
-            onPressed:
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => ConfigScreen()),
-                ),
-            child: Text('Configuración'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => ConfigScreen()),
+              );
+            },
+            child: const Text('Configuración'),
           ),
         ],
       ),
