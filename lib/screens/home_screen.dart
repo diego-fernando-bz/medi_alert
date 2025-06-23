@@ -1,189 +1,72 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:medi_alert/screens/add_medication_screen.dart';
+import 'package:medi_alert/screens/config_screen.dart';
+import 'package:medi_alert/screens/login_screen.dart'; // Solo si tienes login
 
-import 'AddMedicationScreen.dart';
-import 'ConfigScreenState.dart';
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
 
-class HomeScreen extends StatelessWidget {
+class _HomeScreenState extends State<HomeScreen> {
+  List<Map<String, dynamic>> medicamentos = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('MediAlert')),
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
+      appBar: AppBar(
+        title: const Text('MediAlert'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => LoginScreen()),
+              );
+            },
+          ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(8),
         children: [
-          // Bloque de "Próxima toma"
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Color(0xFFE0F7FA),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.access_time),
-                  SizedBox(width: 8.0),
-                  Text(
-                    'Próxima toma 10:30 am',
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                ],
-              ),
-            ),
+          const Text(
+            'Próxima toma:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-
-          // Bloque para Medicamento A (Acetaminofen)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-            child: Card(
-              color: Color(0xFFE3F2FD),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Acetaminofen',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 4.0),
-                    Container(
-                      padding: EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: Color(0xFFE0F7FA),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: Text(
-                        'próxima toma en 1 hora',
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                    ),
-                  ],
+          ...medicamentos.map(
+            (med) => Card(
+              child: ListTile(
+                title: Text(med['nombre']),
+                subtitle: Text(
+                  'Inicio: ${med['horaInicio'].format(context)} - Frecuencia: ${med['frecuencia'].inHours}h',
                 ),
               ),
             ),
           ),
-
-          // Bloque para Medicamento B (Fencafem)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-            child: Card(
-              color: Color(0xFFE3F2FD),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Fencafem',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 4.0),
-                    Container(
-                      padding: EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: Color(0xFFE0F7FA),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: Text(
-                        'próxima toma en 5 horas',
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () async {
+              final resultado = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AddMedicationScreen()),
+              );
+              if (resultado != null) {
+                setState(() => medicamentos.add(resultado));
+              }
+            },
+            child: const Text('Añadir Medicamento'),
           ),
-
-          // Bloque para Medicamento C (Loratadina)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-            child: Card(
-              color: Color(0xFFE3F2FD),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Loratadina',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 4.0),
-                    Container(
-                      padding: EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: Color(0xFFE0F7FA),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: Text(
-                        'próxima toma en 16 horas',
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          // El botón "Añadir Medicamento"
+          const SizedBox(height: 8),
           ElevatedButton(
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AddMedicationScreen()),
+                MaterialPageRoute(builder: (_) => ConfigScreen()),
               );
             },
-            child: Text('Añadir Medicamento'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-            ),
-          ),
-          SizedBox(height: 8),
-          // El botón "configuracion"
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ConfigScreen()),
-              );
-            },
-            child: Text('Configuración'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue, // Ajusta al color de tu tema
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-            ),
+            child: const Text('Configuración'),
           ),
         ],
       ),
